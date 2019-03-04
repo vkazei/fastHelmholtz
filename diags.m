@@ -9,7 +9,9 @@ function A = diags(a)
 %
 % output
 %   A - nxn sparse matrix with a on the diagonal
-
+%
+% Modified from https://github.com/TristanvanLeeuwen/SimpleFWI
 %%
+
 n = length(a(:));
 A = spdiags(a(:),0,n,n);
