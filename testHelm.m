@@ -1,5 +1,7 @@
 % This is a simple test for Helmholtz solver with second order absorbing
-% boundary conditions (ABC). We compare 1st and 2nd order ABCs with analytical solution 
+% boundary conditions (ABC). We compare 1st and 2nd order ABCs with analytical solution
+% (c) Vladimir Kazei, Oleg Ovcharenko and Dmitry Kabanov (2019)
+% inspired by https://github.com/TristanvanLeeuwen/SimpleFWI
 
 set(groot,'DefaultFigureColormap',rdbuMap())
 
@@ -16,13 +18,13 @@ n(1) = round(z_length/dx)+1;
 v = 2 * ones(n); 
 
 % Receivers array
-xr = 0:4*dx:x_length;
+xr = 0:2*dx:x_length;
 zr = 0.5*z_length*ones(1,length(xr));
 
 % Source
 xs = 0.25*x_length;     % location
-zs = 720;
-f = 2.5;                % source frequency
+zs = 2000;
+f = 5;                % source frequency
 
 % Points per wavelength
 lambda_min = min(v(:))/f;
@@ -40,7 +42,7 @@ m = 1./v(:).^2;
 
 %% CONVENTIONAL, 1st order boundaries
 % 1st order Helmholtz matrix
-A1 = getA_true_1st(f,m,h,n);
+A1 = getA_1st(f,m,h,n);
 % Project wavefield to receiver locations
 P = getP(h,n,zr,xr);
 % Project wavefield to source locations
@@ -85,42 +87,42 @@ U2_2D = reshape(U2,n);
 close all;
 % Wavefield (circles)
 figure;
-subplot 321;
+subplot 231;
 imagesc(real(U1_2D)); 
 axis equal tight; colorbar;
 title('1st order boundaries');
 caxis([-0.1 0.1]);
 
 % Plot analytic solution
-subplot 322;
+subplot 232;
 imagesc(real(G_2D));
 axis equal tight; colorbar;
 title('Analytic wavefield');
 caxis([-0.1 0.1]);
 
+% Plot accurate wavefield
+subplot 233;
+imagesc(real(U2_2D));
+axis equal tight; colorbar;
+title('2nd order boundaries')
+caxis([-0.1 0.1]);
+
 % Plot phase difference Conventional<->Analytics
-subplot 323;
+subplot 234;
 imagesc(angle(U1_2D./G_2D));
 caxis([-pi/4 pi/4]);
 axis equal tight; colorbar;
 title('Phase 1st - Analytics')
 
 % Plot phase difference Accurate<->Analytics
-subplot 325;
+subplot 235;
 imagesc(angle(U2_2D./G_2D));
 caxis([-pi/4 pi/4]);
 axis equal tight; colorbar;
 title('Phase 2nd-Analytics')
 
-% Plot accurate wavefield
-subplot 324;
-imagesc(real(U2_2D));
-axis equal tight; colorbar;
-title('2nd order boundaries')
-caxis([-0.1 0.1]);
-
 % Plot relative amplitude error Accurate<->Analytics
-subplot 326;
+subplot 236;
 imagesc(1-abs(U2_2D./G_2D));
 axis equal tight; colorbar;
 title('Relative amplitude error 2nd-Analytics')
@@ -153,3 +155,27 @@ subplot 212
 title 2nd
 imagesc(reshape(source_2_G2D, size(G_2D)));
 caxis(cax);
+
+%% TEST efficiency of banded solver
+model.xs = xr;
+model.zs = zr;
+model.xr = xr;
+model.zr = zr;
+model.f = f;
+model.h = h;
+model.n = n;
+spparms('default');
+disp('Standard MATLAB solver')
+tic;
+D = F(m, model);
+toc;
+spparms('bandden',0);
+disp('Banded solver')
+tic;
+D = F(m, model);
+toc;
+
+
+
+
+
