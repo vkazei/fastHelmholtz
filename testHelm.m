@@ -6,9 +6,9 @@
 set(groot,'DefaultFigureColormap',rdbuMap())
 
 % Define model
-dx = 20;
+dx = 10;
 x_length = 16000;
-z_length = 4000;
+z_length = 3000;
 
 % Grid dimensions
 n(2) = round(x_length/dx)+1;
@@ -22,8 +22,8 @@ xr = 0:2*dx:x_length;
 zr = 0.5*z_length*ones(1,length(xr));
 
 % Source
-xs = 0.25*x_length;     % location
-zs = 2000;
+xs = 0.5*x_length;     % location
+zs = 1500;
 f = 5;                % source frequency
 
 % Points per wavelength
@@ -167,7 +167,7 @@ model.n = n;
 spparms('default');
 disp('Standard MATLAB solver')
 tic;
-D = F(m, model);
+%D = F(m, model);
 toc;
 spparms('bandden',0);
 disp('Banded solver')

@@ -1,4 +1,5 @@
-% creates colormap
+% creates colormap blue-white-red
+% (c) Vladimir Kazei, 2019
 function a = rdbuMap()
 a = zeros(2001,3);
 a(:,:) = NaN;

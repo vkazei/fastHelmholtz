@@ -1,5 +1,5 @@
 function A = getA_1st(f,m,h,n)
-% Create 2D Helmholtz matrix with 2nd order Enquist absorbing boundary
+% Create 2D Helmholtz matrix with 1st order Enquist absorbing boundary
 %
 % use:
 %   A = getA(f,m,h,n)
