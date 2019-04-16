@@ -8,7 +8,7 @@
 set(groot,'DefaultFigureColormap',rdbuMap())
 
 % Define model, [m]
-dx = 20;
+dx = 10;
 xmax = 16000;
 zmax = 3000;
 
@@ -45,13 +45,13 @@ m = 1./v(:).^2;
 
 %% CONVENTIONAL, 1st order boundaries
 % 1st order Helmholtz matrix
-A1 = getA_1st(f,m,h,n);
+A1 = getA_FS(f,m,h,n);
 % Project wavefield to receiver locations
 P = getP(h,n,zr,xr);
 % Project wavefield to source locations
 Q = getP(h,n,zs,xs);
 % 2nd order Helmholtz matrix
-A2 = getA(f,m,h,n);
+A2 = getA(f,m,h,n,true);
 
 % Forward modeling, Conventional wavefield
 tic;
@@ -62,7 +62,7 @@ U1_2D = reshape(U1,n);
 
 %% ANALYTICAL
 % Distance from source to each point in the model
-r = @(zz,xx)(zz.^2+xx.^2).^0.5;
+r = @(zz,xx)((zz-zs).^2+(xx-xs).^2).^0.5;
 % Angular frequency
 omega = 1e-3*2*pi*f;
 % Wavenumber
@@ -72,8 +72,21 @@ K = (omega/v(1));
 % G3D = @(zz,xx)exp(1i*K.*r(zz,xx))./r(zz,xx);
 
 % Analytical wavefield solution. Green's funciton
-G_2D_analytic = @(zz,xx)0.25i * besselh(0,2,conj(K) .* r(zz,xx));
-G_2D = conj(G_2D_analytic(zz - zs, xx - xs));
+G2D =  @(zz,xx)0.25i*besselh(0,2,conj(K).*r(zz,xx));
+
+G2D = G2D(zz,xx);
+
+ 
+%% symmetric source
+zs = -zs;
+r = @(zz,xx)((zz-zs).^2+(xx-xs).^2).^0.5;
+G2D2 =  @(zz,xx)0.25i*besselh(0,2,conj(K).*r(zz,xx));
+
+G2D2 = G2D2(zz,xx);
+
+G_2D = conj(G2D - G2D2);
+
+
 
 %G_2D = fillmissing(G_2D,'pchip');
 
@@ -152,29 +165,29 @@ imagesc(reshape(source_2_G2D, size(G_2D)));
 caxis(cax);
 drawnow;
 
-%% TEST efficiency of banded solver
-model.xs = xr;
-model.zs = zr;
-model.xr = xr;
-model.zr = zr;
-model.f = f;
-model.h = h;
-model.n = n;
-
-disp('Timing');
-
-spparms('default');
-fprintf('\nStandard solver running...\n')
-tic;
-D = F(m, model);
-toc;
-
-spparms('bandden',0);
-fprintf('\nBanded solver running...\n')
-tic;
-D = F(m, model);
-toc;
-
+% %% TEST efficiency of banded solver
+% model.xs = xr;
+% model.zs = zr;
+% model.xr = xr;
+% model.zr = zr;
+% model.f = f;
+% model.h = h;
+% model.n = n;
+% 
+% disp('Timing');
+% 
+% spparms('default');
+% fprintf('\nStandard solver running...\n')
+% tic;
+% D = F(m, model);
+% toc;
+% 
+% spparms('bandden',0);
+% fprintf('\nBanded solver running...\n')
+% tic;
+% D = F(m, model);
+% toc;
+% 
 
 
 

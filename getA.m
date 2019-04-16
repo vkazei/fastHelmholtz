@@ -1,21 +1,26 @@
-function A = getA(f,m,h,n)
+function A = getA(f, m, h, n, fs)
 % Create 2D Helmholtz matrix with 2nd order Clayton-Enquist absorbing boundary
 %
 % use:
-%   A = getA(f,m,h,n)
+%   A = getA(f,m,h,n,fs)
 %
 % input:
 %   f - frequency [Hz]
 %   m - squared-slownes [s^2/km^2]
 %   h - gridspacing in each direction d = [d1, d2];
 %   n - number of gridpoints in each direction n = [n1, n2]
+%   fs - free surface flag, bool, true or false
 %
 % output:
 %   A - sparse matrix
 %
 % Based on https://github.com/TristanvanLeeuwen/SimpleFWI
+%
+% Vladimir Kazei, Oleg Ovcharenko, 2019
 
 %%
+defval('fs',false);
+
 % scale frequency to handle velocity in km/s
 omega = 1e-3*2*pi*f;
 k = omega.*sqrt(m);
@@ -49,7 +54,7 @@ L_BOUND = L2 + L1 - L11 - L22;
 
 % this is a trick to have half Helmholtz in the second variable
 % Matrix a is not equal to 1 at the boundary
-a = ones(n); 
+a = ones(n);
 a(:,[1 end]) = .5; a([1 end],:) = .5; a = a(:);
 
 % boundary points of the domain
@@ -81,7 +86,7 @@ L_corner(1,n(1)+2) = -1;
 L_BOUND(1,1) = L_BOUND(1,1)/2;
 L_BOUND(1,n(1)+2) = L_BOUND(1,1);
 
-% lower left corner 
+% lower left corner
 % compute the first derivative
 L_corner(n(1),n(1)) = 1;
 L_corner(n(1),2*n(1) -1) = -1;
@@ -117,8 +122,8 @@ A = diags(k.^2) + L-L_n;
 
 % Clayton-Enquist 1977
 % P_tt + (1/v) P_xt - (v/2) P_zz = 0
-% we translate with the rules _t -> -i* omega; 
-% k^2 P + 1i * k P_x + 1/2 P_zz = 0 
+% we translate with the rules _t -> -i* omega;
+% k^2 P + 1i * k P_x + 1/2 P_zz = 0
 % where k = omega/v.
 
 % Then we use prepared derivative operators
@@ -127,6 +132,17 @@ A = diags(k.^2) + L-L_n;
 A = A - 1i*(k(1))*(L_n * h(1) - L_corner) + 0.5*L_BOUND;
 
 A = prod(h)*A;
+
+% Free surface
+if fs
+    %     A = getA_FS;
+    b = zeros(n); b(1,:) = 1; b=b(:);
+    FSP = find(b);
+    A(FSP,:) = 0;
+    A(:,FSP) = 0;
+    
+    A = omega^2*diags(b.*m) + A;
+end
 
 % check the number of grid points per wavelength
 if (f > min(1e3*1./sqrt(m))/(5*h(1)))
