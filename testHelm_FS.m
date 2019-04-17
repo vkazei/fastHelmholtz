@@ -45,7 +45,7 @@ m = 1./v(:).^2;
 
 %% CONVENTIONAL, 1st order boundaries
 % 1st order Helmholtz matrix
-A1 = getA_FS(f,m,h,n);
+A1 = getA_1st_FS(f,m,h,n);
 % Project wavefield to receiver locations
 P = getP(h,n,zr,xr);
 % Project wavefield to source locations

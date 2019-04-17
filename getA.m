@@ -135,12 +135,10 @@ A = prod(h)*A;
 
 % Free surface
 if fs
-    %     A = getA_FS;
     b = zeros(n); b(1,:) = 1; b=b(:);
     FSP = find(b);
     A(FSP,:) = 0;
     A(:,FSP) = 0;
-    
     A = omega^2*diags(b.*m) + A;
 end
 
