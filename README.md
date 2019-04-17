@@ -68,5 +68,5 @@ Tests
 [4]: https://github.com/vkazei/fastHelmholtz/archive/master.zip
 [5]: https://git-scm.com
 
-[fig1]: pic/compare_helm_fs.png
-[fig2]: pic/compare_helm.png
+[fig1]: pic/compare_helm.png
+[fig2]: pic/compare_helm_fs.png
