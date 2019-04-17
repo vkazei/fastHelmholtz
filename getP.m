@@ -23,6 +23,5 @@ for k = 1:length(zt)
 end
 
 I = speye(prod(n));
-% Uncomment below to change scaling
-% P = I(:,i)/prod(h);
+
 P = I(:,i);
