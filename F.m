@@ -25,7 +25,7 @@ function D = F(m,model)
 % generate matrices
 A = getA(model.f,m,model.h,model.n);
 P = getP(model.h,model.n,model.zr,model.xr);
-Q = getP(model.h,model.n,model.zs,model.xs);
+Q = getQ(model.h,model.n,model.zs,model.xs);
 
 % solve
 D = P'*(A\Q);

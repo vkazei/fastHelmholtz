@@ -48,8 +48,9 @@ m = 1./v(:).^2;
 A1 = getA_1st(f,m,h,n);
 % Project wavefield to receiver locations
 P = getP(h,n,zr,xr);
-% Project wavefield to source locations
-Q = getP(h,n,zs,xs);
+% Project wavefield to source locations and scale as delta function
+Q = getQ(h,n,zs,xs);
+% scale to mimic delta function on grid;
 % 2nd order Helmholtz matrix
 A2 = getA(f,m,h,n);
 

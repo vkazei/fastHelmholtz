@@ -84,7 +84,7 @@ A = diags(k.^2) + L-L_n;
 
 A = A - 1i*(k(1))*(L_n * h(1) - L_corner);
 
-A = prod(h)*A;
+%A = prod(h)*A;
 
 % check the number of grid points per wavelength
 if (f > min(1e3*1./sqrt(m))/(5*h(1)))

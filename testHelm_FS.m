@@ -49,7 +49,7 @@ A1 = getA_1st_FS(f,m,h,n);
 % Project wavefield to receiver locations
 P = getP(h,n,zr,xr);
 % Project wavefield to source locations
-Q = getP(h,n,zs,xs);
+Q = getQ(h,n,zs,xs);
 % 2nd order Helmholtz matrix
 A2 = getA(f,m,h,n,true);
 

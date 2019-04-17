@@ -54,7 +54,7 @@ FSP = find(b);
 A(FSP,:) = 0;
 A(:,FSP) = 0;
 A = omega^2*diags(2*(a-0.5).*m) + omega^2*diags(b.*m) + A;
-A = prod(h)*A;
+%A = prod(h)*A;
 
 if (f > min(1e3*1./sqrt(m))/(7.5*h(1)))
     warning('f>min(1e3*1./sqrt(m))/(7.5*h(1))=%e',min(1e3*1./sqrt(m))/(7.5*h(1)));
