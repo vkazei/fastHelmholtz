@@ -1,4 +1,4 @@
-function P = getP(h,n,zt,xt)
+function P = getP(zs,xs,z,x)
 % Define sampling operator
 %
 % use:
@@ -6,7 +6,7 @@ function P = getP(h,n,zt,xt)
 %
 % input:
 %   h,n   - gridspacing and number of gridpoints
-%   zt,xt - arrays defining sampling points (must coincide with grid)
+%   zs,xs - arrays defining sampling points (must coincide with grid)
 %
 % output
 %   P     - sparse matrix
@@ -14,14 +14,12 @@ function P = getP(h,n,zt,xt)
 % Modified from https://github.com/TristanvanLeeuwen/SimpleFWI
 
 
-z  = [0:n(1)-1]*h(1);
-x  = [0:n(2)-1]*h(2);
 [zz,xx] = ndgrid(z,x);
 
-for k = 1:length(zt)
-    i(k) = find((zz(:)==zt(k))&(xx(:)==xt(k)));
+for k = 1:length(zs)
+    i(k) = find((zz(:)==zs(k))&(xx(:)==xs(k)));
 end
 
-I = speye(prod(n));
+I = speye(length(x)*length(z));
 
 P = I(:,i);
